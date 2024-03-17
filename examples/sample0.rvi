@@ -10,17 +10,17 @@ START :
 	slli $13, $14, 05 
 	srli $15, $16, 001
 	srai $17, $18, -0011
-	jalr $19, $20, 2 # misaligned, generaets warning
-	lw $20, $21, 22 # misaligned, generaets warning
-	lb $22, $23, 34 # misaligned, generaets warning
-	lb $22, $23, 32 # misaligned, generaets warning
-	jalr $19, $20, START # misaligned, generaets warning
-	jalr $19, $20, LH_ # misaligned, generaets warning
-	jalr $19, $20, HEL # misaligned, generaets warning
-	jalr $19, $20, RET # misaligned, generaets warning
+	jalr $19, $20, 2 # misaligned, generates warning
+	lw $20, $21, 22 # misaligned, generates warning
+	lb $22, $23, 34 # misaligned, generates warning
+	lb $22, $23, 32 # misaligned, generates warning
+	jalr $19, $20, START # misaligned, generates warning
+	jalr $19, $20, LH_ # misaligned, generates warning
+	jalr $19, $20, HEL # misaligned, generates warning
+	jalr $19, $20, RET # misaligned, generates warning
 	lh $24, $25, -4
 	lbu $26, $27, -8
-	lhu $27, $28, -9 # misaligned, generaets warning
+	lhu $27, $28, -9 # misaligned, generates warning
 
 LH_:
 	# R Type instructions

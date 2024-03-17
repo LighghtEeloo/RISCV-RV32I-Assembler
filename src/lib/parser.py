@@ -491,7 +491,7 @@ def parse_pass_one(fin, args):
         if result["tokens"] is None:
             continue
 
-        if result['type'] is 'non_label':
+        if result['type'] == 'non_label':
             address += 4
             continue
 
@@ -521,7 +521,7 @@ def parse_pass_two(fin, fout, symbols_table, args):
         if result["tokens"] is None:
             continue
 
-        if result['type'] is 'label':
+        if result['type'] == 'label':
             continue
 
         instr = None
