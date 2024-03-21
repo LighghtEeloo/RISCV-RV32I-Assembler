@@ -258,8 +258,8 @@ def p_statement_N_NSRV(p):
     imm = get_imm_NSRV(p[8], p.lineno(8))
     p[0] = {
         'opcode': p[1],
-        'rs1': p[2],
-        'rs2': p[4],
+        'rs1': p[4],
+        'rs2': p[2],
         'id': id_,
         'imm': imm,
         'lineno': p.lineno(1)
