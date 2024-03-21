@@ -1,3 +1,14 @@
+What the fork has added:
+
+The parser and codegen of 6 new instructions: NSET, NSEND, NRECV, NLREQ, NLRCV, NSRV.
+To run, `cd src` and
+
+```
+py rvi.py ../examples/samplen.rvi -o ../out.b
+```
+
+---
+
 # RVI
 A simple assembler for the `RV32I` instruction subset. This project in no sense
 is aimed at being a full assembler and the primary motive for developing this

@@ -1,0 +1,11 @@
+addi $1, $0, 5 # 500093
+addi $2, $0, 4 # 400113
+beq $1,$2, -8  # FE208CE3
+nset  1
+nsend $1, 7
+nrecv 7, $0
+nlreq $3, 3, 2
+nlrcv 1, $0
+nsrv  $5, $6, 7, 8
+
+
