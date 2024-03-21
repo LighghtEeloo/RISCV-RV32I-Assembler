@@ -189,6 +189,78 @@ def p_statement_SB_JALR_LABEL(p):
         raise SyntaxError
 
 
+def p_statement_N_NSET(p):
+    'statement : OPCODE IMMEDIATE NEWLINE'
+    if not p[1] == mcc.INSTR_NSET:
+        cp.cprint_fail("Error:" + str(p.lineno(1)) +
+                       ": Incorrect opcode or arguments")
+        raise SyntaxError
+    p[0] = {
+        'opcode': p[1],
+        'imm': p[2],
+        'lineno': p.lineno(1)
+    }
+
+
+def p_statement_N_Reg_Imm(p):
+    'statement : OPCODE register COMMA IMMEDIATE NEWLINE'
+    if p[1] != mcc.INSTR_NSEND:
+        cp.cprint_fail("Error:" + str(p.lineno(1)) +
+                        ": Incorrect opcode or arguments")
+        raise SyntaxError
+    p[0] = {
+        'opcode': p[1],
+        'rs1': p[2],
+        'imm': p[4],
+        'lineno': p.lineno(1)
+    }
+
+
+def p_statement_N_Imm_Reg(p):
+    'statement : OPCODE IMMEDIATE COMMA register NEWLINE'
+    if not p[1] in [mcc.INSTR_NRECV, mcc.INSTR_NLRCV]:
+        cp.cprint_fail("Error:" + str(p.lineno(1)) +
+                        ": Incorrect opcode or arguments")
+        raise SyntaxError
+    p[0] = {
+        'opcode': p[1],
+        'rs2': p[4],
+        'imm': p[2],
+        'lineno': p.lineno(1)
+    }
+
+
+def p_statement_N_Reg_Imm_Imm(p):
+    'statement : OPCODE register COMMA IMMEDIATE COMMA IMMEDIATE NEWLINE'
+    if not p[1] == mcc.INSTR_NLREQ:
+        cp.cprint_fail("Error:" + str(p.lineno(1)) +
+                       ": Incorrect opcode or arguments")
+        raise SyntaxError
+    p[0] = {
+        'opcode': p[1],
+        'rs1': p[2],
+        'imm1': p[4],
+        'imm2': p[6],
+        'lineno': p.lineno(1)
+    }
+
+
+def p_statement_N_NSRV(p):
+    'statement : OPCODE register COMMA register COMMA IMMEDIATE COMMA IMMEDIATE NEWLINE'
+    if not p[1] == mcc.INSTR_NSRV:
+        cp.cprint_fail("Error:" + str(p.lineno(1)) +
+                       ": Incorrect opcode or arguments")
+        raise SyntaxError
+    p[0] = {
+        'opcode': p[1],
+        'rs1': p[2],
+        'rs2': p[4],
+        'imm1': p[6],
+        'imm2': p[8],
+        'lineno': p.lineno(1)
+    }
+
+
 def p_register(p):
     'register : REGISTER'
     r = p[1]

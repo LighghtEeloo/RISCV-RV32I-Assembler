@@ -46,6 +46,13 @@ class MachineCodeConst:
     INSTR_OR = 'or'
     INSTR_AND = 'and'
 
+    INSTR_NSET = 'nset'
+    INSTR_NSEND = 'nsend'
+    INSTR_NRECV = 'nrecv'
+    INSTR_NLREQ = 'nlreq'
+    INSTR_NLRCV = 'nlrcv'
+    INSTR_NSRV = 'nsrv'
+
     # All reserved opcodes
     ALL_INSTR = [INSTR_LUI, INSTR_AUIPC, INSTR_JAL,
                  INSTR_JALR, INSTR_BEQ, INSTR_BNE, INSTR_BLT,
@@ -57,7 +64,9 @@ class MachineCodeConst:
                  INSTR_SRLI, INSTR_SRAI, INSTR_ADD,
                  INSTR_SUB, INSTR_SLL, INSTR_SLT,
                  INSTR_SLTU, INSTR_XOR, INSTR_SRL,
-                 INSTR_SRA, INSTR_OR, INSTR_AND
+                 INSTR_SRA, INSTR_OR, INSTR_AND,
+                 INSTR_NSET, INSTR_NSEND, INSTR_NRECV,
+                 INSTR_NLREQ, INSTR_NLRCV, INSTR_NSRV
                  ]
     # All instruction in a type
     INSTR_TYPE_U = [INSTR_LUI, INSTR_AUIPC]
@@ -73,6 +82,8 @@ class MachineCodeConst:
     INSTR_TYPE_R = [INSTR_ADD, INSTR_SUB, INSTR_SLL,
                     INSTR_SLT, INSTR_SLTU, INSTR_XOR,
                     INSTR_SRL, INSTR_SRA, INSTR_OR, INSTR_AND]
+    INSTR_TYPE_N = [INSTR_NSET, INSTR_NSEND, INSTR_NRECV,
+                    INSTR_NLREQ, INSTR_NLRCV, INSTR_NSRV]
 
     # Binary Opcodes
     BOP_LUI = '0110111'
@@ -172,3 +183,5 @@ class MachineCodeConst:
         INSTR_BLTU: '110',
         INSTR_BGEU: '111'
     }
+
+
