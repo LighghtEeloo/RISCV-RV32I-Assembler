@@ -117,7 +117,9 @@ def p_statement_I_S_SB(p):
 def p_statement_U_UJ(p):
     'statement : OPCODE register COMMA IMMEDIATE NEWLINE'
 
-    if (p[1] not in mcc.INSTR_TYPE_U) and (p[1] not in mcc.INSTR_TYPE_UJ):
+    if (p[1] not in mcc.INSTR_TYPE_U) \
+        and (p[1] not in mcc.INSTR_TYPE_UJ) \
+        and (p[1] != mcc.INSTR_NSEND):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
@@ -141,6 +143,14 @@ def p_statement_U_UJ(p):
             'opcode': p[1],
             'rd': p[2],
             'imm': imm,
+            'lineno': p.lineno(1)
+        }
+    elif p[1] == mcc.INSTR_NSEND:
+        id_ = get_imm_Id(p[4], p.lineno(4))
+        p[0] = {
+            'opcode': p[1],
+            'rd': p[2],
+            'id': id_,
             'lineno': p.lineno(1)
         }
     else:
@@ -195,23 +205,10 @@ def p_statement_N_NSET(p):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
+    imm = get_imm_Id(p[2], p.lineno(2))
     p[0] = {
         'opcode': p[1],
-        'imm': p[2],
-        'lineno': p.lineno(1)
-    }
-
-
-def p_statement_N_Reg_Imm(p):
-    'statement : OPCODE register COMMA IMMEDIATE NEWLINE'
-    if p[1] != mcc.INSTR_NSEND:
-        cp.cprint_fail("Error:" + str(p.lineno(1)) +
-                        ": Incorrect opcode or arguments")
-        raise SyntaxError
-    p[0] = {
-        'opcode': p[1],
-        'rs1': p[2],
-        'imm': p[4],
+        'id': imm,
         'lineno': p.lineno(1)
     }
 
@@ -222,10 +219,11 @@ def p_statement_N_Imm_Reg(p):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                         ": Incorrect opcode or arguments")
         raise SyntaxError
+    id_ = get_imm_Id(p[2], p.lineno(2))
     p[0] = {
         'opcode': p[1],
         'rs2': p[4],
-        'imm': p[2],
+        'id': id_,
         'lineno': p.lineno(1)
     }
 
@@ -236,11 +234,16 @@ def p_statement_N_Reg_Imm_Imm(p):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
+    id_ = get_imm_Id(p[4], p.lineno(4))
+    ret, imm, msg = get_imm_I(p[6], p.lineno(6))
+    if not ret:
+        cp.cprint_fail("Error:" + str(p.lineno(6)) + ":" + msg)
+        raise SyntaxError
     p[0] = {
         'opcode': p[1],
         'rs1': p[2],
-        'imm1': p[4],
-        'imm2': p[6],
+        'id': id_,
+        'imm': imm,
         'lineno': p.lineno(1)
     }
 
@@ -251,12 +254,14 @@ def p_statement_N_NSRV(p):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
+    id_ = get_imm_Id(p[6], p.lineno(6))
+    imm = get_imm_NSRV(p[8], p.lineno(8))
     p[0] = {
         'opcode': p[1],
         'rs1': p[2],
         'rs2': p[4],
-        'imm1': p[6],
-        'imm2': p[8],
+        'id': id_,
+        'imm': imm,
         'lineno': p.lineno(1)
     }
 
@@ -320,6 +325,28 @@ def get_imm_I(imm10, lineno):
     # p[0] = int(imm2, 2)
     assert(len(imm2) == 12)
     return True, imm2, p_statement_none
+
+
+def get_imm_Id(imm10, lineno):
+    imm10 = int(imm10)
+    if imm10 < 0 or imm10 > 0b1111:
+        cp.cprint_fail("Error:" + str(lineno) +
+                       ": ID not in range")
+        raise SyntaxError
+    imm2 = f"{(imm10 if imm10 >= 0 else (1 << 5) + imm10):05b}"
+    imm2 = imm2[-5:]
+    return imm2
+
+
+def get_imm_NSRV(imm10, lineno):
+    imm10 = int(imm10)
+    if imm10 < -0b1111111 or imm10 > 0b1111111:
+        cp.cprint_fail("Error:" + str(lineno) +
+                       ": Immediate not in range")
+        raise SyntaxError
+    imm2 = f"{(imm10 if imm10 >= 0 else (1 << 8) + imm10):08b}"
+    imm2 = imm2[-8:]
+    return imm2
 
 
 def get_imm_U(imm10, lineno):
