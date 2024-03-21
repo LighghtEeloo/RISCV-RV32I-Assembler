@@ -398,6 +398,100 @@ class MachineCodeGenerator:
         }
         return bin_str, tok_dict
 
+    def op_n(self, tokens):
+        match tokens['opcode']:
+            case self.CONST.INSTR_NSET:
+                '''
+                7'b0 id 13'b0 opcode
+                '''
+                id_ = tokens["id"]
+                bin_opcode = self.CONST.BOP_NSET
+                tok_dict = {
+                    'opcode': bin_opcode,
+                    'id': id_
+                }
+                return f'{0:07b}{id_}{0:013b}{bin_opcode}', tok_dict
+            case self.CONST.INSTR_NSEND:
+                '''
+                7'b0 rs2 8'b0 id opcode
+                '''
+                rs2 = tokens["rs2"]
+                bin_rs2 = self.get_bin_register(rs2)
+                id_ = tokens["id"]
+                bin_opcode = self.CONST.BOP_NSEND
+                tok_dict = {
+                    'opcode': bin_opcode,
+                    'rs2': rs2,
+                    'id': id_
+                }
+                return f'{0:07b}{bin_rs2}{0:08b}{id_}{bin_opcode}', tok_dict
+            case self.CONST.INSTR_NRECV:
+                '''
+                12'b0 id 3'b0 rd opcode
+                '''
+                id_ = tokens["id"]
+                rd = tokens["rd"]
+                bin_rd = self.get_bin_register(rd)
+                bin_opcode = self.CONST.BOP_NRECV
+                tok_dict = {
+                    'opcode': bin_opcode,
+                    'id': id_,
+                    'rd': rd
+                }
+                return f'{0:012b}{id_}{0:03b}{bin_rd}{bin_opcode}', tok_dict
+            case self.CONST.INSTR_NLREQ:
+                '''
+                imm[11:0] rs1 3'b0 id opcode
+                '''
+                imm = tokens["imm"]
+                rs1 = tokens["rs1"]
+                bin_rs1 = self.get_bin_register(rs1)
+                id_ = tokens["id"]
+                bin_opcode = self.CONST.BOP_NLREQ
+                tok_dict = {
+                    'opcode': bin_opcode,
+                    'imm': imm,
+                    'rs1': rs1,
+                    'id': id_
+                }
+                return f'{imm}{bin_rs1}{0:03b}{id_}{bin_opcode}', tok_dict
+            case self.CONST.INSTR_NLRCV:
+                '''
+                12'b0 id 3'b0 rd opcode
+                '''
+                id_ = tokens["id"]
+                rd = tokens["rd"]
+                bin_rd = self.get_bin_register(rd)
+                bin_opcode = self.CONST.BOP_NLRCV
+                tok_dict = {
+                    'opcode': bin_opcode,
+                    'id': id_,
+                    'rd': rd
+                }
+                return f'{0:012b}{id_}{0:03b}{bin_rd}{bin_opcode}', tok_dict
+            case self.CONST.INSTR_NSRV:
+                '''
+                imm[6:0] rs2 rs1 3'b0 id opcode
+                '''
+                imm = tokens["imm"]
+                rs2 = tokens["rs2"]
+                bin_rs2 = self.get_bin_register(rs2)
+                rs1 = tokens["rs1"]
+                bin_rs1 = self.get_bin_register(rs1)
+                id_ = tokens["id"]
+                bin_opcode = self.CONST.BOP_NSRV
+                tok_dict = {
+                    'opcode': bin_opcode,
+                    'imm': imm,
+                    'rs2': rs2,
+                    'rs1': rs1,
+                    'id': id_
+                }
+                return f'{imm}{bin_rs2}{bin_rs1}{0:03b}{id_}{bin_opcode}', tok_dict
+            case _:
+                ...
+
+
     def convert_to_binary(self, tokens):
         '''
         The driver function for converting tokens to machine code.
@@ -432,6 +526,8 @@ class MachineCodeGenerator:
             return self.op_arithi(tokens)
         elif opcode in self.CONST.INSTR_BOP_ARITH:
             return self.op_arith(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_N:
+            return self.op_n(tokens)
         else:
             cp.cprint_fail("Error:" + str(tokens['lineno']) +
                            ": Opcode: '%s' not implemented" % opcode)

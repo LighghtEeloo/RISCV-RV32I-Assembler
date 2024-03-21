@@ -100,6 +100,13 @@ class MachineCodeConst:
     BOP_MISCMEM = '0001111'
     # [ ECALL, EBREAK, CSRRW, CSRRS, cSRRC, CSRRWI, CSRRSI, CSRRCI]
     BOP_SYSTEM = '1110011'
+    # N Opcodes
+    BOP_NSET = '0101011'
+    BOP_NSEND = '1111011'
+    BOP_NRECV = '0001011'
+    BOP_NLREQ = '0011111'
+    BOP_NLRCV = '1011011'
+    BOP_NSRV = '0111111'
 
     # The instruction in each distinct binary opcode
     INSTR_BOP_LUI = [INSTR_LUI]

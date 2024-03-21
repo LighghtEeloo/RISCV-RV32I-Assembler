@@ -149,7 +149,7 @@ def p_statement_U_UJ(p):
         id_ = get_imm_Id(p[4], p.lineno(4))
         p[0] = {
             'opcode': p[1],
-            'rd': p[2],
+            'rs2': p[2],
             'id': id_,
             'lineno': p.lineno(1)
         }
@@ -222,7 +222,7 @@ def p_statement_N_Imm_Reg(p):
     id_ = get_imm_Id(p[2], p.lineno(2))
     p[0] = {
         'opcode': p[1],
-        'rs2': p[4],
+        'rd': p[4],
         'id': id_,
         'lineno': p.lineno(1)
     }
@@ -340,12 +340,12 @@ def get_imm_Id(imm10, lineno):
 
 def get_imm_NSRV(imm10, lineno):
     imm10 = int(imm10)
-    if imm10 < -0b1111111 or imm10 > 0b1111111:
+    if imm10 < -0b111111 or imm10 > 0b111111:
         cp.cprint_fail("Error:" + str(lineno) +
                        ": Immediate not in range")
         raise SyntaxError
-    imm2 = f"{(imm10 if imm10 >= 0 else (1 << 8) + imm10):08b}"
-    imm2 = imm2[-8:]
+    imm2 = f"{(imm10 if imm10 >= 0 else (1 << 7) + imm10):07b}"
+    imm2 = imm2[-7:]
     return imm2
 
 
@@ -630,6 +630,8 @@ def parse_pass_two(fin, fout, symbols_table, args):
 
         if result['type'] == 'label':
             continue
+
+        print(result)
 
         instr = None
         result = result['tokens']
