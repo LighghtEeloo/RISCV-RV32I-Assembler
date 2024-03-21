@@ -66,7 +66,9 @@ def p_statement_R(p):
 
 def p_statement_I_S_SB(p):
     'statement : OPCODE register COMMA register COMMA IMMEDIATE NEWLINE'
-    if (p[1] not in mcc.INSTR_TYPE_I) and (p[1] not in mcc.INSTR_TYPE_S)and (p[1] not in mcc.INSTR_TYPE_SB):
+    if (p[1] not in mcc.INSTR_TYPE_I) \
+        and (p[1] not in mcc.INSTR_TYPE_S) \
+        and (p[1] not in mcc.INSTR_TYPE_SB):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
@@ -95,7 +97,7 @@ def p_statement_I_S_SB(p):
             'imm': imm,
             'lineno': p.lineno(1)
         }
-    else:  # SB (BRANCH)
+    elif p[1] in mcc.INSTR_TYPE_SB:
         ret, imm, msg = get_imm_SB(p[6], p.lineno(6))
         if not ret:
             cp.cprint_fail("Error:" + str(p.lineno(1)) + ":" + msg)
@@ -107,6 +109,9 @@ def p_statement_I_S_SB(p):
             'imm': imm,
             'lineno': p.lineno(1)
         }
+    else:
+        raise SyntaxError
+
 
 
 def p_statement_U_UJ(p):
@@ -127,7 +132,7 @@ def p_statement_U_UJ(p):
             'imm': imm,
             'lineno': p.lineno(1)
         }
-    else:  # UJ Type
+    elif p[1] in mcc.INSTR_TYPE_UJ:  # UJ Type
         ret, imm, msg = get_imm_UJ(p[4], p.lineno(4))
         if not ret:
             cp.cprint_fail("Error:" + str(p.lineno(1)) + ":" + msg)
@@ -138,6 +143,8 @@ def p_statement_U_UJ(p):
             'imm': imm,
             'lineno': p.lineno(1)
         }
+    else:
+        raise SyntaxError
 
 
 def p_statement_UJ_LABEL(p):
@@ -147,16 +154,15 @@ def p_statement_UJ_LABEL(p):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
-    else:  # UJ Type
-        p[0] = {
-            'opcode': p[1],
-            'rd': p[2],
-            'label': p[4],
-            'lineno': p.lineno(1)
-        }
+    p[0] = {
+        'opcode': p[1],
+        'rd': p[2],
+        'label': p[4],
+        'lineno': p.lineno(1)
+    }
 
 
-def p_statement_SB__JALR_LABEL(p):
+def p_statement_SB_JALR_LABEL(p):
     'statement : OPCODE register COMMA register COMMA LABEL NEWLINE'
     # Branch and JALR
     if (p[1] not in mcc.INSTR_TYPE_SB) and (p[1] != mcc.INSTR_JALR):
@@ -179,6 +185,8 @@ def p_statement_SB__JALR_LABEL(p):
             'label': p[6],
             'lineno': p.lineno(1)
         }
+    else:
+        raise SyntaxError
 
 
 def p_register(p):
